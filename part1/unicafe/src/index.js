@@ -1,18 +1,38 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+const Button = ({ handleClick, text }) => {
+  return (
+    <button onClick={handleClick(text)}>{text}</button>
+  )
+}
+
+const Statistic = ({ text, value }) => {
+  return (
+    text === 'positive' ? (
+      <div>
+        <p>{text} {value} %</p>
+      </div>
+    ) : (
+        <div>
+          <p>{text} {value}</p>
+        </div>
+    )
+  )
+}
+
 const Statistics = ({ good, neutral, bad, all, average, positive, feedback }) => {
   return (
     <div>
       <h1>statistics</h1>
       {feedback ? (
         <div>
-          <p>good {good}</p>
-          <p>neutral {neutral}</p>
-          <p>bad {bad}</p>
-          <p>all {all}</p>
-          <p>average {average}</p>
-          <p>positive {positive} %</p>
+          <Statistic text="good" value={good} />
+          <Statistic text="neutral" value={neutral} />
+          <Statistic text="bad" value={bad} />
+          <Statistic text="all" value={all} />
+          <Statistic text="average" value={average} />
+          <Statistic text="positive" value={positive} />
         </div>
       ) : (
         <p>No feedback given</p> 
@@ -31,7 +51,7 @@ const App = () => {
   const average = clicks ? score / clicks : '-' 
   const positive = good ? (good / clicks) * 100.0 : '-'
 
-  const handleClick = id => () => {
+  const handleFeedback = id => () => {
     setClicks(clicks + 1)
     setFeedback(true)
 
@@ -50,9 +70,9 @@ const App = () => {
   return (
     <>
       <h1>give feedback</h1>
-      <button onClick={handleClick('good')}>good</button>
-      <button onClick={handleClick('neutral')}>neutral</button>
-      <button onClick={handleClick('bad')}>bad</button>
+      <Button handleClick={handleFeedback} text='good' />
+      <Button handleClick={handleFeedback} text='neutral' />
+      <Button handleClick={handleFeedback} text='bad' />
       <Statistics good={good} neutral={neutral} bad={bad} all={clicks} average={average} positive={positive} feedback={feedback} />
     </>
   )
