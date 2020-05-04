@@ -10,13 +10,13 @@ const Button = ({ handleClick, text }) => {
 const Statistic = ({ text, value }) => {
   return (
     text === 'positive' ? (
-      <div>
-        <p>{text} {value} %</p>
-      </div>
+      
+        <td>{text} {value} %</td>
+      
     ) : (
-        <div>
-          <p>{text} {value}</p>
-        </div>
+        
+          <td>{text} {value}</td>
+        
     )
   )
 }
@@ -24,19 +24,31 @@ const Statistic = ({ text, value }) => {
 const Statistics = ({ good, neutral, bad, all, average, positive, feedback }) => {
   return (
     <div>
-      <h1>statistics</h1>
-      {feedback ? (
-        <div>
-          <Statistic text="good" value={good} />
-          <Statistic text="neutral" value={neutral} />
-          <Statistic text="bad" value={bad} />
-          <Statistic text="all" value={all} />
-          <Statistic text="average" value={average} />
-          <Statistic text="positive" value={positive} />
-        </div>
-      ) : (
-        <p>No feedback given</p> 
+    <table>
+        <thead style={{ columnSpan: 'all' }}>
+          <tr>
+            <td><h1>statistics</h1></td>
+          </tr></thead>
+      
+        {feedback ? (
+        <tbody>
+        <tr><Statistic text="good" value={good} /></tr>
+        <tr><Statistic text="neutral" value={neutral} /></tr>
+        <tr><Statistic text="bad" value={bad} /></tr>
+        <tr><Statistic text="all" value={all} /></tr>
+        <tr><Statistic text="average" value={average} /></tr>
+        <tr><Statistic text="positive" value={positive} /></tr>
+          </tbody>
+        ) : (
+          <tbody>
+        <tr>
+          <td>No feedback given</td>
+        </tr> 
+        </tbody>
       )}
+      
+      
+    </table>
     </div>
   )
 }
