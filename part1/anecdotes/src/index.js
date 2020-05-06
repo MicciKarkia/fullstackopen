@@ -35,8 +35,8 @@ const App = ({ anecdotes }) => {
         <h2>Anecdote with most votes</h2>
         {highScore ?
           (<div>{highScoreAnecdote}
-          <p>has {highScore} votes</p></div>)
-        : (<p>No votes yet</p>)}
+            <p>has {highScore} votes</p></div>)
+          : (<p>No votes yet</p>)}
         
       </div>
       
