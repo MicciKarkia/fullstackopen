@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const Courses = ({ courses }) => {
+/*const Courses = ({ courses }) => {
   console.log('courses', courses)
   return (
     courses.map(course => 
       <Course key={course.id} course={course} />)
   )
-}
+}*/
 
 const Course = ({ course }) => {
   console.log('course props is', course)
@@ -101,10 +101,14 @@ const App = () => {
     <div>
       <h1>Web development curriculum</h1>
       <div>
-        <Courses courses={courses} />
+        {courses.map(course =>
+          <Course key={course.id} course={course} />)}
+        
       </div>
     </div>
   )
 }
+
+//<Courses courses={courses} />
 
 ReactDOM.render(<App />, document.getElementById('root'))
