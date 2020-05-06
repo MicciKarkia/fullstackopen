@@ -4,30 +4,43 @@ import ReactDOM from 'react-dom';
 const App = ({ anecdotes }) => {
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(Array(anecdotes.length).fill(0))
-
-  console.log(points)
+  const [highScore, setHighScore] = useState('')
+  const [highScoreAnecdote, setHighScoreAnecdote] = useState('')
 
   const handleVote = () => {
     console.log('voted')
     const newPoints = [...points]
     newPoints[selected] += 1
+    const highScoreIndex = newPoints.indexOf(Math.max(...newPoints.map(point => point)))
+    console.log(highScoreIndex)
     setPoints(newPoints)
+    setHighScoreAnecdote(anecdotes[highScoreIndex])
+    setHighScore(newPoints[highScoreIndex])
   }
 
   const handleClick = () => {
     setSelected(Math.floor(Math.random() * 7))
   }
 
-  console.log(selected)
-
   return (
     <>
       <div>
-        {anecdotes[selected]}
+        <h2>Anecdote of the day</h2>
+        <p>{anecdotes[selected]}</p>
         <p>has {points[selected]} votes</p>
       </div>
       <button onClick={handleVote}>vote</button>
       <button onClick={handleClick}>next anecdote</button>
+      <div>
+        <h2>Anecdote with most votes</h2>
+        {highScore ?
+          (<div>{highScoreAnecdote}
+          <p>has {highScore} votes</p></div>)
+        : (<p>No votes yet</p>)}
+        
+      </div>
+      
+
     </>
   )
 }
