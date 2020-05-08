@@ -11,9 +11,17 @@ const App = () => {
     const personObject = {
       name: newName,
     }
+ 
+    const sameName = () => persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+    const isFound = sameName().length
+    console.log(sameName())
+    const showPopup = () => window.alert(`No duplicates! \n${newName} is already added to phonebook`)
+    const addPersonObject = () => setPersons(persons.concat(personObject))
 
-    setPersons(persons.concat(personObject))
+    isFound ? showPopup() : addPersonObject()
+    
     setNewName('')
+
   }
 
   const handleNameChange = (event) => {
