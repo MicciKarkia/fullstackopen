@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -44,50 +47,16 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const rows = () => {
-    if (searchResult) {
-      if (searchResult.length) {
-        return ( searchResult.map(person =>
-       <li key={person.name}>{person.name} {person.number}</li>)
-      )
-      } else {
-        return ( <li>No matching search results</li>)
-      }
-      
-    } else {
-     return ( persons.map(person =>
-       <li key={person.name}>{person.name} {person.number}</li>)
-     )
-    }
-      
-  }
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>filter shown with
-        <input onChange={handleSearch} />
-      </div>
+      <Filter handleSearch={handleSearch} />
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input
-            value={newNumber}
-            onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm addPerson={addPerson} newName={newName}
+        handleNameChange={handleNameChange} newNumber={newNumber}
+        handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <ul style={{listStyle:'none', padding: 0}}>
-        {rows()}
-      </ul>
+      <Persons persons={persons} searchResult={searchResult}/>
     </div>
   )
 }
