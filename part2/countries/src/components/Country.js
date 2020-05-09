@@ -1,7 +1,6 @@
 import React from 'react'
 
-const Country = ({ showCountries }) => {
-  const country = showCountries[0]
+const Country = ({ country }) => {
   console.log(country)
   const listLanguages = country.languages.map(language => 
     <li key={language.name}>{language.name}</li>)
