@@ -1,37 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Country from './Country'
 
-const Countries = ({ showCountries }) => {
-  const [showCountry, setShowCountry] = useState(false)
-  const [countryDetails, setCountryDetails] = useState(null)
+const Countries = ({ showCountries, handleClickOpen, handleClickClose, showCountry, countryDetails, weatherDetails }) => {
+  
   const message = 'Too many matches, specify another filter'
 
-  console.log(showCountries)
-
-  const handleClickOpen = (index) => {
-    console.log('clickopen index', index)
-    console.log(showCountries[index])
-    setShowCountry(true)
-    setCountryDetails(showCountries[index])
-  }
-
-  const handleClickClose = (index) => {
-    console.log('click close index', index)
-    setShowCountry(false)
-    setCountryDetails(null)
-  }
-
+  console.log('showCountries: ', showCountries)
+  console.log('countryDetails', countryDetails)
+  console.log('weatherDetails: ', weatherDetails)
+  
   const listCountries = showCountries.map((listCountry, index) =>
     <li
       key={listCountry.numericCode}>
-      {listCountry.name}
+      <span>{listCountry.name} </span>
       {(!showCountry || listCountry.name !== countryDetails.name) ?
-        <button onClick={() => handleClickOpen(index)}>show</button> : <button onClick={() =>handleClickClose(index)}>close</button>}
-      {showCountry && countryDetails.name === listCountry.name && <div><Country country={countryDetails} /></div>}
-      </li>
+        <button onClick={() => handleClickOpen(index)}>show</button> : <button onClick={() => handleClickClose(index)}>close</button>}
+      {showCountry && countryDetails.name === listCountry.name && <div><Country countryDetails={countryDetails} weatherDetails={weatherDetails} /></div>}
+    </li> 
   )
 
   /*
+{listCountry.name}
+      {(!showCountry || listCountry.name !== countryDetails.name) ?
+        <button onClick={() => handleClickOpen(index)}>show</button> : <button onClick={() => handleClickClose(index)}>close</button>}
+      {showCountry && countryDetails.name === listCountry.name && <div><Country countryDetails={countryDetails} weatherDetails={weatherDetails} /></div>}
+
 {(!countryDetails || listCountry.name !== countryDetails.name) && <button onClick={() => handleClickOpen(index)}>show</button>}
 
   {(!showCountry || (listCountry.name !== showCountries[index].name)) && <button onClick={() => handleClickOpen(index)}>show</button>}
@@ -51,14 +44,14 @@ const Countries = ({ showCountries }) => {
       )
     } else if (showCountries.length > 1) {
       return (
-        <ul style={{listStyle: 'none', padding: 0}}>
+        <ul style={{listStyle: "none", padding: 0}}>
         {listCountries}
       </ul>
       )
     } else if (showCountries.length === 1) {
-      return (
-        <Country country={showCountries[0]} />
-      )
+        return (
+           <div><Country countryDetails={countryDetails} weatherDetails={weatherDetails} /></div>
+        ) 
     }
   }
 

@@ -7,6 +7,12 @@ import Countries from './components/Countries'
 const App = () => {
   const [countries, setCountries] = useState([])
   const [showCountries, setShowCountries] = useState([])
+  const [showCountry, setShowCountry] = useState(false)
+  const [query, setQuery] = useState('')
+  const [countryDetails, setCountryDetails] = useState({})
+  const [weatherDetails, setWeatherDetails] = useState([])
+
+  
 
   useEffect(() => {
     axios
@@ -26,13 +32,68 @@ const App = () => {
         .includes(searchTerm.toUpperCase()))
     console.log('search results: ', searchResult)
     setShowCountries(searchResult)
-
+    setCountryDetails('')
+    setWeatherDetails([])
+    if (searchResult.length === 1) {
+      setQuery(searchResult[0].capital)
+      setCountryDetails(searchResult[0])
+    }
   }
+
+  console.log('query: ', query)
+
+  useEffect(() => {
+    const getWeather = () => {
+      axios
+        .get(`http://api.weatherstack.com/current?access_key=${process.env.REACT_APP_API_KEY}&query=${query}`)
+        .then(response => {
+          console.log('api res:', response)
+          setWeatherDetails([response.data.current])
+        })
+    }
+    if (query) {
+      getWeather()
+    }
+  }, [query])
+
+  const handleClickOpen = (index) => {
+    console.log('clickopen index', index)
+    console.log(showCountries[index].capital)
+    setWeatherDetails([])
+    setQuery(showCountries[index].capital)
+    setCountryDetails(showCountries[index])
+    setShowCountry(true)
+    console.log('countryDetails', countryDetails)
+    console.log('showCountry is', showCountry)
+  }
+
+  const handleClickClose = (index) => {
+    console.log('click close index', index)
+    setShowCountry(false)
+    setCountryDetails({})
+    setQuery('')
+    setWeatherDetails([])
+  }
+
+  
+
+  /*useEffect(() => {
+    const getWeather = () => {
+    axios
+      .get(`http://api.wheatherstack.com/current?access_key=${api_key}&query=${countryDetails.capital}`)
+      .then(response => {
+        console.log('api res:', response)
+      })
+  }
+    getWeather()
+  }, [countryDetails])*/
+
+  
 
   return (
     <div>
       <Filter handleSearch={handleSearch} />
-      <Countries showCountries={showCountries}/>
+      <Countries showCountries={showCountries} handleClickOpen={handleClickOpen} handleClickClose={handleClickClose} showCountry={showCountry} countryDetails={countryDetails} weatherDetails={weatherDetails} />
     </div>
   )
 }
