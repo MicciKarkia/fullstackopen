@@ -27,7 +27,15 @@ const App = () => {
  
     const isFound = persons.some(person => person.name.toLowerCase() === newName.toLowerCase())
     const showPopup = () => window.alert(`No duplicates! \n${newName} is already added to phonebook`)
-    const addPersonObject = () => setPersons(persons.concat(personObject))
+
+    const addPersonObject = () => {
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(personObject))
+        })
+      
+    }
 
     isFound ? showPopup() : addPersonObject()
 
