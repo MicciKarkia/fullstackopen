@@ -3,6 +3,7 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,12 +12,19 @@ const App = () => {
   const [searchResult, setSearchResult] = useState(null)
 
   useEffect(() => {
-    axios
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
+
+  /*
+  axios
       .get('http://localhost:3001/persons')
       .then(response => {
         setPersons(response.data)
-      })
-  }, [])
+      })*/
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -29,10 +37,15 @@ const App = () => {
     const showPopup = () => window.alert(`No duplicates! \n${newName} is already added to phonebook`)
 
     const addPersonObject = () => {
-      axios
+      /*axios
         .post('http://localhost:3001/persons', personObject)
         .then(response => {
           setPersons(persons.concat(personObject))
+        })*/
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
         })
       
     }
