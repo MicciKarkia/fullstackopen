@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import Filter from './components/Filter'
-import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
-import personService from './services/persons'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
+import personService from "./services/persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [searchResult, setSearchResult] = useState(null)
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [searchResult, setSearchResult] = useState(null);
 
   useEffect(() => {
-    personService
-      .getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
-      })
-  }, [])
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   /*
   axios
@@ -27,14 +25,17 @@ const App = () => {
       })*/
 
   const addPerson = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const personObject = {
       name: newName,
-      number: newNumber
-    }
- 
-    const isFound = persons.some(person => person.name.toLowerCase() === newName.toLowerCase())
-    const showPopup = () => window.alert(`No duplicates! \n${newName} is already added to phonebook`)
+      number: newNumber,
+    };
+
+    const isFound = persons.some(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
+    const showPopup = () =>
+      window.alert(`No duplicates! \n${newName} is already added to phonebook`);
 
     const addPersonObject = () => {
       /*axios
@@ -42,55 +43,76 @@ const App = () => {
         .then(response => {
           setPersons(persons.concat(personObject))
         })*/
-      personService
-        .create(personObject)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-        })
-      
-    }
+      personService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+      });
+    };
 
-    isFound ? showPopup() : addPersonObject()
+    isFound ? showPopup() : addPersonObject();
 
-    console.log('persons: ', persons)
-    
-    setNewName('')
-    setNewNumber('')
-  }
+    console.log("persons: ", persons);
+
+    setNewName("");
+    setNewNumber("");
+  };
 
   const handleSearch = (event) => {
-    console.log('Searching for:', event.target.value)
-    const searchTerm = event.target.value
-    setSearchResult(persons.filter(person => person.name.toLowerCase().includes(searchTerm.toLowerCase())))
-  }
+    console.log("Searching for:", event.target.value);
+    const searchTerm = event.target.value;
+    setSearchResult(
+      persons.filter((person) =>
+        person.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  };
 
   const handleSearchStop = (event) => {
-    console.log('searching stopped')
-    setSearchResult(null)
-  }
+    console.log("searching stopped");
+    setSearchResult(null);
+  };
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
-    setNewName(event.target.value)
-  }
+    console.log(event.target.value);
+    setNewName(event.target.value);
+  };
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
-    setNewNumber(event.target.value)
-  }
+    console.log(event.target.value);
+    setNewNumber(event.target.value);
+  };
+
+  const handleDeletePerson = (personToDelete) => {
+    console.log("delete button pressed", personToDelete);
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personService.remove(personToDelete.id).then((deletedPerson) => {
+        console.log("person deleted", deletedPerson);
+        setPersons(
+          persons.filter((person) => person.name !== personToDelete.name)
+        );
+      });
+    }
+  };
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter handleSearch={handleSearch} handleSearchStop={handleSearchStop} />
       <h2>add a new</h2>
-      <PersonForm addPerson={addPerson} newName={newName}
-        handleNameChange={handleNameChange} newNumber={newNumber}
-        handleNumberChange={handleNumberChange} />
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
-      <Persons persons={persons} searchResult={searchResult}/>
+      <Persons
+        persons={persons}
+        searchResult={searchResult}
+        handleDeletePerson={handleDeletePerson}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
