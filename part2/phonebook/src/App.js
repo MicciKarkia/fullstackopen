@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -17,13 +16,6 @@ const App = () => {
     });
   }, []);
 
-  /*
-  axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })*/
-
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
@@ -31,24 +23,37 @@ const App = () => {
       number: newNumber,
     };
 
-    const isFound = persons.some(
+    const isFound = persons.filter(
       (person) => person.name.toLowerCase() === newName.toLowerCase()
     );
-    const showPopup = () =>
-      window.alert(`No duplicates! \n${newName} is already added to phonebook`);
+
+    const addNewNumber = () => {
+      const changeNumberObject = { ...isFound[0], number: personObject.number };
+      console.log("changedNumber: ", changeNumberObject);
+      if (
+        window.confirm(
+          `${changeNumberObject.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        console.log("isFound is: ", isFound);
+        const id = changeNumberObject.id;
+        personService.update(id, changeNumberObject).then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id !== returnedPerson.id ? person : returnedPerson
+            )
+          );
+        });
+      }
+    };
 
     const addPersonObject = () => {
-      /*axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(personObject))
-        })*/
       personService.create(personObject).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
       });
     };
 
-    isFound ? showPopup() : addPersonObject();
+    isFound.length ? addNewNumber() : addPersonObject();
 
     console.log("persons: ", persons);
 

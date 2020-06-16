@@ -14,7 +14,7 @@ const Persons = ({ persons, searchResult, handleDeletePerson }) => {
       }
     } else {
       return persons.map((person) => (
-        <li key={person.name}>
+        <li key={person.id}>
           {person.name} {person.number}{" "}
           <button onClick={() => handleDeletePerson(person)}>delete</button>
         </li>
