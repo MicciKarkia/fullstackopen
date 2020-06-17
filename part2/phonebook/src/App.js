@@ -10,7 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchResult, setSearchResult] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -18,55 +18,91 @@ const App = () => {
     });
   }, []);
 
+  const showMessage = (message) => {
+    setMessage(message);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  };
+
   const addPerson = (event) => {
     event.preventDefault();
+
     const personObject = {
       name: newName,
       number: newNumber,
     };
 
-    const isFound = persons.filter(
+    const isFound = persons.some(
       (person) => person.name.toLowerCase() === newName.toLowerCase()
     );
 
-    const showSuccessMessage = (message) => {
-      setSuccessMessage(message);
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
-    };
+    const toUpdate = persons.filter(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
 
     const addNewNumber = () => {
-      const changeNumberObject = { ...isFound[0], number: personObject.number };
+      const changeNumberObject = {
+        ...toUpdate[0],
+        number: personObject.number,
+      };
       console.log("changedNumber: ", changeNumberObject);
+      console.log("message is: ", message);
+
       if (
         window.confirm(
           `${changeNumberObject.name} is already added to phonebook, replace the old number with a new one?`
         )
       ) {
-        console.log("isFound is: ", isFound);
         const id = changeNumberObject.id;
-        personService.update(id, changeNumberObject).then((returnedPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.id !== returnedPerson.id ? person : returnedPerson
-            )
-          );
-          showSuccessMessage(`Changed ${returnedPerson.name}'s number`);
-        });
+        personService
+          .update(id, changeNumberObject)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== returnedPerson.id ? person : returnedPerson
+              )
+            );
+            showMessage({
+              type: "success",
+              content: `Changed ${returnedPerson.name}'s number`,
+            });
+          })
+          .catch((error) => {
+            showMessage({
+              type: "error",
+              content: `Information of ${changeNumberObject.name} has already been removed from server`,
+            });
+            setPersons(
+              persons.filter((person) => person.id !== changeNumberObject.id)
+            );
+          });
       }
     };
 
     const addPersonObject = () => {
-      personService.create(personObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        showSuccessMessage(`Added ${returnedPerson.name}`);
-      });
+      personService
+        .create(personObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          showMessage({
+            type: "success",
+            content: `Added ${returnedPerson.name}`,
+          });
+        })
+        .catch((error) => {
+          showMessage({
+            type: "error",
+            content: `Information of ${personObject.name} has already been added from server`,
+          });
+          setPersons(persons.filter((person) => person.id !== personObject.id));
+        });
     };
 
-    isFound.length ? addNewNumber() : addPersonObject();
+    isFound ? addNewNumber() : addPersonObject();
 
     console.log("persons: ", persons);
+    console.log("message is: ", message);
 
     setNewName("");
     setNewNumber("");
@@ -100,19 +136,36 @@ const App = () => {
   const handleDeletePerson = (personToDelete) => {
     console.log("delete button pressed", personToDelete);
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
-      personService.remove(personToDelete.id).then((deletedPerson) => {
-        console.log("person deleted", deletedPerson);
-        setPersons(
-          persons.filter((person) => person.name !== personToDelete.name)
-        );
-      });
+      personService
+        .remove(personToDelete.id)
+        .then((deletedPerson) => {
+          console.log("person deleted", deletedPerson);
+          setPersons(
+            persons.filter((person) => person.name !== personToDelete.name)
+          );
+          showMessage({
+            type: "success",
+            content: `Deleted ${personToDelete.name}`,
+          });
+        })
+        .catch((error) => {
+          showMessage({
+            type: "error",
+            content: `Information of ${personToDelete.name} has already been removed from server`,
+          });
+          setPersons(
+            persons.filter((person) => person.id !== personToDelete.id)
+          );
+        });
     }
+
+    console.log("message is: ", message);
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={message} />
       <Filter handleSearch={handleSearch} handleSearchStop={handleSearchStop} />
       <h2>add a new</h2>
       <PersonForm
